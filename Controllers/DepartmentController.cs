@@ -70,5 +70,21 @@ namespace EmpCoreApiProject.Controllers
             }
             return Ok(departmentEntry);
         }
+        [HttpPut]
+        [Route("{id:guid}")]
+        public IActionResult UpdateDepartment(Guid id, Department department)
+        {
+            var existingDepartment = _dbContext.Departments
+                .Include(d => d.EmployeeDetails)
+                .FirstOrDefault(d => d.DepartmentId == id);
+            if (existingDepartment == null)
+            {
+                return NotFound();
+            }
+            existingDepartment.Name = department.Name;
+            existingDepartment.Description = department.Description;
+            _dbContext.SaveChanges();
+            return Ok(existingDepartment);
+        }
     }
 }
